@@ -15,6 +15,7 @@ var (
 	maxMessages = flag.Uint("max-messages", 1000, "Maximum number of messages to dump")
 	outputDir   = flag.String("output-dir", ".", "Directory in which to save the dumped messages")
 	verbose     = flag.Bool("verbose", false, "Print progress")
+	ack         = flag.Bool("ack", false, "Remove messages from the queue")
 )
 
 func main() {
@@ -52,7 +53,7 @@ func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint, o
 	VerboseLog(fmt.Sprintf("Pulling messages from queue %q", queueName))
 	for messagesReceived := uint(0); messagesReceived < maxMessages; messagesReceived++ {
 		msg, ok, err := channel.Get(queueName,
-			false, // autoAck
+			*ack, // autoAck
 		)
 		if err != nil {
 			return fmt.Errorf("Queue Get: %s", err)
